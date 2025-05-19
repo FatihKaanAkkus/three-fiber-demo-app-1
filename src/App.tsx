@@ -1,11 +1,13 @@
 import { useRef, useState } from "react";
 import "./App.css";
 import { addEffect, Canvas } from "@react-three/fiber";
-import { Box, OrbitControls, Preload, View } from "@react-three/drei";
+import { Box, Loader, OrbitControls, Preload, View } from "@react-three/drei";
 import Lenis from "lenis";
 import "./shaders";
 import { Common } from "./Scene";
 import AbstractComponent from "./components/AbstractComponent";
+import { Link, useRoute } from "wouter";
+import { useTransition, a } from "@react-spring/three";
 
 const images = [
   "https://images.unsplash.com/photo-1746903781349-bd2a9e45960c?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -20,7 +22,13 @@ export default function App() {
   const [imageSrc] = useState(images[0]);
 
   return (
-    <>
+    <div className="w-full text-center p-10">
+      <div className="space-x-5">
+        <Link href="/">Home</Link>
+        <Link href="/page-1">Page 1</Link>
+        <Link href="/page-2">Page 2</Link>
+        <Link href="/page-3">Page 3*</Link>
+      </div>
       <div className="h-full p-10 z-0">
         <div className="grid grid-cols-12 my-40">
           <div className="relative col-span-6 col-start-2">
@@ -88,11 +96,10 @@ export default function App() {
       </div>
       <View className="fixed inset-0 -z-10">
         <Common color={0x000000} />
-        {/* <Sphere>
-          <customShaderMaterial time={1} />
-        </Sphere> */}
-        <AbstractComponent />
-        <OrbitControls />
+        <group>
+          <AnimatedRoutes3D />
+        </group>
+        {/* <ExitAnimation /> */}
       </View>
       <Canvas
         style={{
@@ -102,12 +109,77 @@ export default function App() {
           left: 0,
           right: 0,
           overflow: "hidden",
+          zIndex: 10,
         }}
         eventSource={document.getElementById("root") as HTMLElement}
       >
         <View.Port />
         <Preload all />
       </Canvas>
+      <Loader />
+    </div>
+  );
+}
+
+function AnimatedRoutes3D() {
+  // Call useRoute for each route at the top level
+  const [matchHome] = useRoute("/");
+  const [matchPage1] = useRoute("/page-1");
+  const [matchPage2] = useRoute("/page-2");
+
+  // Find the currently matched route
+  let visible = null;
+  if (matchHome) visible = { key: "/", color: "lime" };
+  else if (matchPage1) visible = { key: "/page-1", color: "yellow" };
+  else if (matchPage2) visible = { key: "/page-2", color: "pink" };
+
+  const transitions = useTransition(visible, {
+    from: { scale: 0, position: -2 },
+    enter: { scale: 1, position: 0 },
+    leave: { scale: 0, position: 2 },
+    config: { tension: 170, friction: 26 },
+    keys: visible ? visible.key : null,
+  });
+
+  return (
+    <>
+      {transitions((style, item) =>
+        item ? (
+          <a.group
+            scale={style.scale}
+            position-x={style.position}
+            key={item.key}
+          >
+            <AbstractComponent color={item.color} />
+          </a.group>
+        ) : null
+      )}
+    </>
+  );
+}
+
+export function ExitAnimation() {
+  const [isVisible, setIsVisible] = useState(true);
+
+  const transitions = useTransition(isVisible, {
+    from: { scale: 0, opacity: 0 },
+    enter: { scale: 1, opacity: 1 },
+    leave: { scale: 0, opacity: 0 },
+    config: { tension: 170, friction: 26 },
+  });
+
+  return (
+    <>
+      {transitions((style, item) =>
+        item ? (
+          <a.group scale={style.scale}>
+            <AbstractComponent color="teal" />
+          </a.group>
+        ) : null
+      )}
+      <Box position={[1, 0, 0]} onClick={() => setIsVisible((v) => !v)}>
+        {isVisible ? "Hide" : "Show"}
+      </Box>
     </>
   );
 }
