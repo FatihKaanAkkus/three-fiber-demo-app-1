@@ -1,50 +1,90 @@
-# React + TypeScript + Vite
+# R3F Drei Demo App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A demo application built with **React**, **TypeScript**, **Vite**, and **react-three-fiber** (R3F) using Drei helpers. This project showcases interactive 3D scenes, custom shaders, and advanced material effects.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Fast development with Vite and hot module replacement
+- 3D rendering using [react-three-fiber](https://docs.pmnd.rs/react-three-fiber)
+- Helpers from [@react-three/drei](https://github.com/pmndrs/drei)
+- Custom GLSL shaders and materials
+- TypeScript for type safety
+- ESLint and Prettier for code quality
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+```
+public/
+  assets/
+    images/
+    models/
+src/
+  components/
+  materials/
+  models/
+  shaders/
+  App.tsx
+  Scene.tsx
+  main.tsx
+```
 
-- Configure the top-level `parserOptions` property like this:
+## Getting Started
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
+1. **Install dependencies:**
+
+   ```sh
+   npm install
+   ```
+
+2. **Start the development server:**
+
+   ```sh
+   npm run dev
+   ```
+
+3. Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+## Scripts
+
+- `npm run dev` – Start development server
+- `npm run build` – Build for production
+- `npm run preview` – Preview production build
+- `npm run lint` – Lint code with ESLint
+
+## Linting & Formatting
+
+- ESLint is set up for TypeScript and React.
+- To enable type-aware linting, update `eslint.config.js` as follows:
+  ```js
+  export default tseslint.config({
+    languageOptions: {
+      parserOptions: {
+        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
-  },
-})
-```
+    // ...other config
+  });
+  ```
+- For React-specific linting, install `eslint-plugin-react` and add:
+  ```js
+  import react from "eslint-plugin-react";
+  export default tseslint.config({
+    settings: { react: { version: "detect" } },
+    plugins: { react },
+    rules: {
+      ...react.configs.recommended.rules,
+      ...react.configs["jsx-runtime"].rules,
+    },
+  });
+  ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Custom Shaders & Materials
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+- See `src/materials/` and `src/shaders/` for custom GLSL and material logic.
+- Example: `WatercolorShaderMaterial.tsx`, `FlowmapShaderMaterial.tsx`
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Assets
+
+- 3D models: `public/assets/models/`
+- Images: `public/assets/images/`

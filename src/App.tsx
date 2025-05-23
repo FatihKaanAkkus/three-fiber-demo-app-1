@@ -1,18 +1,24 @@
 import { useRef, useState } from "react";
 import "./App.css";
 import { addEffect, Canvas } from "@react-three/fiber";
-import { Box, Loader, OrbitControls, Preload, View } from "@react-three/drei";
+import {
+  Bounds,
+  Box,
+  Center,
+  Loader,
+  OrbitControls,
+  Preload,
+  View,
+} from "@react-three/drei";
 import Lenis from "lenis";
+import "./materials";
 import "./shaders";
 import { Common } from "./Scene";
 import AbstractComponent from "./components/AbstractComponent";
-import { Link, useRoute } from "wouter";
+import { Link } from "wouter";
 import { useTransition, a } from "@react-spring/three";
 
-const images = [
-  "https://images.unsplash.com/photo-1746903781349-bd2a9e45960c?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1746950862738-399b20e6f0eb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-];
+const images = ["/assets/images/stock-1.jfif", "/assets/images/stock-2.jfif"];
 
 const lenis = new Lenis({ syncTouch: true });
 addEffect((t) => lenis.raf(t));
@@ -94,10 +100,17 @@ export default function App() {
           </div>
         </div>
       </div>
-      <View className="fixed inset-0 -z-10">
+      <View className="fixed inset-0 z-10">
         <Common color={0x000000} />
         <group>
-          <AnimatedRoutes3D />
+          {/* <AnimatedRoutes3D /> */}
+          <Bounds fit clip observe>
+            <Center>
+              <AbstractComponent color={"lime"} />
+            </Center>
+          </Bounds>
+          {/* <Box>
+          </Box> */}
         </group>
         {/* <ExitAnimation /> */}
       </View>
@@ -121,42 +134,43 @@ export default function App() {
   );
 }
 
-function AnimatedRoutes3D() {
-  // Call useRoute for each route at the top level
-  const [matchHome] = useRoute("/");
-  const [matchPage1] = useRoute("/page-1");
-  const [matchPage2] = useRoute("/page-2");
+// function AnimatedRoutes3D() {
+//   // Call useRoute for each route at the top level
+//   const [matchHome] = useRoute("/");
+//   const [matchPage1] = useRoute("/page-1");
+//   const [matchPage2] = useRoute("/page-2");
 
-  // Find the currently matched route
-  let visible = null;
-  if (matchHome) visible = { key: "/", color: "lime" };
-  else if (matchPage1) visible = { key: "/page-1", color: "yellow" };
-  else if (matchPage2) visible = { key: "/page-2", color: "pink" };
+//   // Find the currently matched route
+//   let visible = null;
+//   if (matchHome) visible = { key: "/", color: "lime" };
+//   else if (matchPage1) visible = { key: "/page-1", color: "yellow" };
+//   else if (matchPage2) visible = { key: "/page-2", color: "pink" };
 
-  const transitions = useTransition(visible, {
-    from: { scale: 0, position: -2 },
-    enter: { scale: 1, position: 0 },
-    leave: { scale: 0, position: 2 },
-    config: { tension: 170, friction: 26 },
-    keys: visible ? visible.key : null,
-  });
+//   const transitions = useTransition(visible, {
+//     from: { scale: 0, position: -2 },
+//     enter: { scale: 1, position: 0 },
+//     leave: { scale: 0, position: 2 },
+//     config: { tension: 170, friction: 26 },
+//     keys: visible ? visible.key : null,
+//   });
 
-  return (
-    <>
-      {transitions((style, item) =>
-        item ? (
-          <a.group
-            scale={style.scale}
-            position-x={style.position}
-            key={item.key}
-          >
-            <AbstractComponent color={item.color} />
-          </a.group>
-        ) : null
-      )}
-    </>
-  );
-}
+//   return (
+//     <>
+//       <pointLight intensity={1} position={[0, 5, 0]} />
+//       {transitions((style, item) =>
+//         item ? (
+//           <a.group
+//             scale={style.scale}
+//             position-x={style.position}
+//             key={item.key}
+//           >
+//             <AbstractComponent color={item.color} />
+//           </a.group>
+//         ) : null
+//       )}
+//     </>
+//   );
+// }
 
 export function ExitAnimation() {
   const [isVisible, setIsVisible] = useState(true);

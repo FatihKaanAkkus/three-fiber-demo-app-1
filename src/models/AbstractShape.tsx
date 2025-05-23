@@ -3,6 +3,8 @@ import { useGLTF } from "@react-three/drei";
 import { Mesh } from "three";
 import { GLTF } from "three-stdlib";
 
+const modelPath = "assets/models/Geometric_Harmony_Bal_0513181426_texture.glb";
+
 type AbstractShapeGLTFResult = GLTF &
   ObjectMap & {
     nodes: {
@@ -16,9 +18,7 @@ export function AbstractShape({
   ref,
   ...props
 }: ThreeElements["group"]) {
-  const { nodes } = useGLTF(
-    "/Geometric_Harmony_Bal_0513181426_texture.glb"
-  ) as AbstractShapeGLTFResult;
+  const { nodes } = useGLTF(modelPath) as AbstractShapeGLTFResult;
 
   return (
     <group {...props} dispose={null}>
@@ -35,4 +35,4 @@ export function AbstractShape({
   );
 }
 
-useGLTF.preload("/Geometric_Harmony_Bal_0513181426_texture.glb");
+useGLTF.preload(modelPath);
